@@ -19,15 +19,6 @@ const sampleSites = [
     format: "Digital Billboard",
     visibility: 90,
   },
-  {
-    mediaOwner: "Face First Media",
-    siteName: "Durban Beachfront Wrap",
-    location: "Durban Central",
-    lat: -29.8579,
-    lng: 31.0292,
-    format: "Digital Wrap",
-    visibility: 80,
-  },
 ];
 
 function App() {
@@ -36,12 +27,7 @@ function App() {
   const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    if (!window.google) {
-      console.error("❌ Google Maps failed to load.");
-      return;
-    }
-
-    if (mapLoaded) return;
+    if (!window.google || mapLoaded) return;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: -29.85, lng: 24.0 },
@@ -52,65 +38,42 @@ function App() {
     trafficLayer.setMap(map);
 
     sampleSites.forEach((site) => {
-      if (
-        site.siteName.toLowerCase().includes(filter.toLowerCase()) ||
-        site.mediaOwner.toLowerCase().includes(filter.toLowerCase())
-      ) {
-        const marker = new window.google.maps.Marker({
-          position: { lat: site.lat, lng: site.lng },
-          map,
-          title: site.siteName,
-        });
+      const marker = new window.google.maps.Marker({
+        position: { lat: site.lat, lng: site.lng },
+        map,
+        title: site.siteName,
+      });
 
-        const infoWindow = new window.google.maps.InfoWindow({
-          content: `
-            <div style="width: 250px">
-              <strong>${site.siteName}</strong><br/>
-              ${site.mediaOwner}<br/>
-              ${site.format}<br/>
-              Visibility Score: ${site.visibility}<br/><br/>
-              <iframe
-                width="100%"
-                height="150"
-                frameborder="0"
-                style="border:0"
-                src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyA5JMU9RHzfy-5njlKruwxuiNpXbg33Yiw
-                  &location=${site.lat},${site.lng}
-                  &heading=210&pitch=10&fov=80"
-                allowfullscreen>
-              </iframe>
-            </div>
-          `,
-        });
+      const infoWindow = new window.google.maps.InfoWindow({
+        content: `
+          <div style="width: 250px">
+            <strong>${site.siteName}</strong><br/>
+            ${site.mediaOwner}<br/>
+            ${site.format}<br/>
+            Visibility Score: ${site.visibility}<br/><br/>
+            <iframe
+              width="100%"
+              height="150"
+              frameborder="0"
+              style="border:0"
+              src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyA5JMU9RHzfy-5njlKruwxuiNpXbg33Yiw
+                &location=${site.lat},${site.lng}"
+              allowfullscreen>
+            </iframe>
+          </div>
+        `,
+      });
 
-        marker.addListener("click", () => {
-          infoWindow.open(map, marker);
-        });
-      }
+      marker.addListener("click", () => infoWindow.open(map, marker));
     });
 
     setMapLoaded(true);
-  }, [filter, mapLoaded]);
+  }, [mapLoaded]);
 
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "10px", background: "#f0f0f0" }}>
-        <h2>🗺️ DOOH Planner with Live Traffic + Street View</h2>
-        <input
-          placeholder="Filter by Media Owner or Site Name"
-          value={filter}
-          onChange={(e) => {
-            setMapLoaded(false);
-            setFilter(e.target.value);
-          }}
-          style={{
-            padding: "8px",
-            width: "300px",
-            marginTop: "10px",
-            borderRadius: "4px",
-            border: "1px solid #ccc",
-          }}
-        />
+        <h2>🗺️ DOOH Planner</h2>
       </div>
       <div ref={mapRef} style={{ flex: 1 }} />
     </div>
