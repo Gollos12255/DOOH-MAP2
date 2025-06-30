@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import App from "./App";
 
 const sampleSites = [
   {
