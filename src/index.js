@@ -1,3 +1,17 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+
+
+// File: src/App.js
+
 import React, { useEffect, useRef, useState } from "react";
 
 const sampleSites = [
@@ -36,7 +50,12 @@ function App() {
   const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    if (!window.google || mapLoaded) return;
+    if (!window.google) {
+      console.error("❌ Google Maps failed to load.");
+      return;
+    }
+
+    if (mapLoaded) return;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: -29.85, lng: 24.0 },
@@ -69,9 +88,7 @@ function App() {
                 height="150"
                 frameborder="0"
                 style="border:0"
-                src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyA5JMU9RHzfy-5njlKruwxuiNpXbg33Yiw
-                  &location=${site.lat},${site.lng}
-                  &heading=210&pitch=10&fov=80"
+                src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyA5JMU9RHzfy-5njlKruwxuiNpXbg33Yiw&location=${site.lat},${site.lng}&heading=210&pitch=10&fov=80"
                 allowfullscreen>
               </iframe>
             </div>
@@ -90,7 +107,7 @@ function App() {
   return (
     <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "10px", background: "#f0f0f0" }}>
-        <h2>🗺️ DOOH Planner with Live Traffic + Street View</h2>
+        <h2>🗺️ DOOH Planner with Traffic + Street View</h2>
         <input
           placeholder="Filter by Media Owner or Site Name"
           value={filter}
