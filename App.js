@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 const sampleSites = [
   {
@@ -23,11 +23,9 @@ const sampleSites = [
 
 function App() {
   const mapRef = useRef(null);
-  const [filter, setFilter] = useState("");
-  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    if (!window.google || mapLoaded) return;
+    if (!window.google) return;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: -29.85, lng: 24.0 },
@@ -56,26 +54,22 @@ function App() {
               height="150"
               frameborder="0"
               style="border:0"
-              src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyA5JMU9RHzfy-5njlKruwxuiNpXbg33Yiw
-                &location=${site.lat},${site.lng}"
+              src="https://www.google.com/maps/embed/v1/streetview?key=AIzaSyA5JMU9RHzfy-5njlKruwxuiNpXbg33Yiw&location=${site.lat},${site.lng}"
               allowfullscreen>
             </iframe>
           </div>
         `,
       });
 
-      marker.addListener("click", () => infoWindow.open(map, marker));
+      marker.addListener("click", () => {
+        infoWindow.open(map, marker);
+      });
     });
-
-    setMapLoaded(true);
-  }, [mapLoaded]);
+  }, []);
 
   return (
-    <div style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <div style={{ padding: "10px", background: "#f0f0f0" }}>
-        <h2>🗺️ DOOH Planner</h2>
-      </div>
-      <div ref={mapRef} style={{ flex: 1 }} />
+    <div style={{ height: "100vh", width: "100%" }}>
+      <div ref={mapRef} style={{ height: "100%", width: "100%" }} />
     </div>
   );
 }
